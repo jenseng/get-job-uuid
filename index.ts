@@ -3,18 +3,19 @@ import * as path from "path";
 import find from "find-process";
 import { globby } from "globby";
 
+const processName = "Runner.Worker";
 try {
-  const results = await find("name", "Runner.Worker");
+  const results = await find("name", processName);
   if (results.length !== 1) {
     console.warn(results);
     throw new Error(`Expected exactly one Runner.worker process, but found ${results.length}`);
   }
 
   const workerCmd = results[0]!.cmd;
-  const index = workerCmd.indexOf("/bin/Runner.worker");
+  const index = workerCmd.indexOf(`/bin/${processName}`);
   if (index === -1) {
     throw new Error(
-      `Unable to extract path from Runner.worker command string, this might be a bug (${workerCmd})`
+      `Unable to extract path from ${processName} command string, this might be a bug (${workerCmd})`
     );
   }
 
@@ -26,7 +27,7 @@ try {
   if (workerLogFiles.length !== 1) {
     console.warn(workerLogFiles);
     throw new Error(
-      `Expected exactly one Runner.worker log file, but found ${workerLogFiles.length}`
+      `Expected exactly one Runner.Worker log file, but found ${workerLogFiles.length}`
     );
   }
 
@@ -34,7 +35,7 @@ try {
   const lines = workerLogFile.split("\n");
   const jobIdLine = lines.find((line) => line.includes("INFO JobRunner] Job ID "));
   if (!jobIdLine) {
-    throw new Error("Unable to find job ID in Runner.worker log file, this might be a bug");
+    throw new Error(`Unable to find job ID in ${processName} log file, this might be a bug`);
   }
   const uuid = jobIdLine.split("INFO JobRunner] Job ID ")[1]!;
 
