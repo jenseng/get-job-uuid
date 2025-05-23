@@ -5,7 +5,7 @@ on:
       - main
   pull_request: {}
 jobs:
-  test:
+  validate-dist:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,7 +25,14 @@ jobs:
             echo "Build output has changed. Please run 'npm run build' and commit the changes."
             exit 1
           }
+  test:
+    needs: validate-dist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
       - uses: ./
         id: get-job-uuid
-      - run: |
-          echo "Job UUID: ${{ steps.get-job-uuid.outputs.uuid }}"
+      - if: (!steps.get-job-uuid.outputs.uuid)
+        run: |
+          echo "::error::Job UUID not found. This is probably a bug"
+          exit 1

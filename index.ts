@@ -38,7 +38,6 @@ try {
     throw new Error(`Unable to find job ID in ${processName} log file, this might be a bug`);
   }
   const uuid = jobIdLine.split("INFO JobRunner] Job ID ")[1]!;
-
   await fs.appendFile(process.env.GITHUB_OUTPUT!, `uuid=${uuid}\n`);
 } catch (e) {
   console.error(`::error::${e}`);
