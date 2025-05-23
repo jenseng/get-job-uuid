@@ -1,0 +1,21 @@
+{
+  "name": "get-job-uuid",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsup index.ts --format esm",
+    "format": "prettier . --write",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "find-process": "1.4.10",
+    "globby": "^14.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.21",
+    "husky": "^9.1.7",
+    "prettier": "^3.5.3",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  }
+}

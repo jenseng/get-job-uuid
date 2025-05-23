@@ -1,0 +1,8 @@
+name: Get Job UUID
+description: Get the UUID for the current GitHub Actions job
+runs:
+  using: node20
+  main: dist/index.js
+outputs:
+  uuid:
+    description: The UUID of the current job

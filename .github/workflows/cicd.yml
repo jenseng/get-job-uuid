@@ -1,0 +1,29 @@
+name: CICD
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - run: npm install
+      - run: npm run format
+      - run: |
+          git diff --exit-code || {
+            echo "Code formatting issues found. Please run 'npm run format' and commit the changes."
+            exit 1
+          }
+      - run: npm run build
+      - run: |
+          git diff --exit-code dist || {
+            echo "Build output has changed. Please run 'npm run build' and commit the changes."
+            exit 1
+          }
+      - uses: ./
+        id: get-job-uuid
