@@ -27,3 +27,5 @@ jobs:
           }
       - uses: ./
         id: get-job-uuid
+      - run: |
+          echo "Job UUID: ${{ steps.get-job-uuid.outputs.uuid }}"
