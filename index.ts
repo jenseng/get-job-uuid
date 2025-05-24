@@ -10,7 +10,6 @@ try {
     console.warn(results);
     throw new Error(`Expected exactly one Runner.worker process, but found ${results.length}`);
   }
-  console.log(results);
 
   const workerCmd = results[0]!.cmd;
   const index = workerCmd.indexOf(path.join("bin", processName));
