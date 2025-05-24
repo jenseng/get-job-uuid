@@ -27,7 +27,7 @@ On the API side, this UUID is exposed as the corresponding [check run's `externa
     # first find the check_suite_id for this run
     check_suite_id="$(
       gh api "repos/{owner}/{repo}/actions/runs/${GITHUB_RUN_ID}" --jq .check_suite_id
-    )" >> "$GITHUB_OUTPUT"
+    )"
 
     # then use the check_suite_id and uuid to find the job id
     # (the check run id _is_ the job id)
