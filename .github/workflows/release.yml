@@ -30,27 +30,27 @@ jobs:
       - name: Create release commit and tags
         shell: bash
         run: |
-          new_version="$(npm version "$version" --no-git-tag-version --allow-same-version)"
+          full_version="$(npm version "$version" --no-git-tag-version)"
+          major_version="$(echo "$full_version" | cut -d. -f1)"
           npm install
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
           git add package.json package-lock.json
-          git commit -m "chore(release): ${new_version} [skip ci]"
-          git tag "v$new_version"
-          major="$(node -p 'require("./package.json").version.split(".")[0]')"
+          git commit -m "chore(release): ${full_version} [skip ci]"
+          git tag "${full_version}"
           git tag "v$major"
-          echo "new_version=$new_version" >> "$GITHUB_ENV"
-          echo "major=$major" >> "$GITHUB_ENV"
+          echo "full_version=${full_version}" >> "$GITHUB_ENV"
+          echo "major_version=${major_version}" >> "$GITHUB_ENV"
       - name: Push commit and tags
         shell: bash
         run: |
-          git push --atomic main "v${new_version}" "+v${major}"
+          git push --atomic origin main "${full_version}" "+${major_version}"
       - name: Create release
         shell: bash
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          gh release create "v${new_version}" \
-            --title "v${new_version}" \
-            --notes "Release v${new_version}" \
+          gh release create "${full_version}" \
+            --title "${full_version}" \
+            --notes "Release ${full_version}" \
             --target "$(git rev-parse HEAD)"
