@@ -38,7 +38,7 @@ jobs:
           git add package.json package-lock.json
           git commit -m "chore(release): ${full_version} [skip ci]"
           git tag "${full_version}"
-          git tag "v$major"
+          git tag "${major_version}"
           echo "full_version=${full_version}" >> "$GITHUB_ENV"
           echo "major_version=${major_version}" >> "$GITHUB_ENV"
       - name: Push commit and tags
