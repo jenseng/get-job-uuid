@@ -1,5 +1,6 @@
 {
   "name": "get-job-uuid",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "scripts": {
