@@ -56,3 +56,21 @@ jobs:
           check_run_id=$(gh api "repos/{owner}/{repo}/check-suites/${check_suite_id}/check-runs" --jq ".check_runs[] | select(.external_id == env.uuid) | .id")
           echo "::notice::Job ID: ${check_run_id}"
           echo "::notice::Job URL: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${check_run_id}"
+
+  test-docker:
+    needs: validate-dist
+    runs-on: ubuntu-latest
+    container:
+      image: node:20
+    steps:
+      - uses: jenseng/get-job-uuid@v1
+        id: get-job-uuid
+      - if: (!steps.get-job-uuid.outputs.uuid)
+        run: |
+          echo "::error::Job UUID not found. This is probably a bug"
+          exit 1
+      - name: Echo job UUID
+        env:
+          uuid: ${{ steps.get-job-uuid.outputs.uuid }}
+        run: |
+          echo "Job UUID: $uuid"
