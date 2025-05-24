@@ -44,13 +44,15 @@ jobs:
           exit 1
       - name: Get check suite id
         id: get-check-suite-id
-        run: echo "check_suite_id=$(gh api /repos/{owner}/{repo}/actions/runs/${GITHUB_RUN_ID} --jq .check_suite_id)" >> "$GITHUB_OUTPUT"
+        shell: bash
+        run: echo "check_suite_id=$(gh api "repos/{owner}/{repo}/actions/runs/${GITHUB_RUN_ID}" --jq .check_suite_id)" >> "$GITHUB_OUTPUT"
       - name: Find job id
         id: find-check-run
         env:
           uuid: ${{ steps.get-job-uuid.outputs.uuid }}
           check_suite_id: ${{ steps.get-check-suite-id.outputs.check_suite_id }}
+        shell: bash
         run: |
-          check_run_id=$(gh api /repos/{owner}/{repo}/check-suites/${check_suite_id}/check-runs --jq ".check_runs[] | select(.external_id == env.uuid) | .id")
+          check_run_id=$(gh api "repos/{owner}/{repo}/check-suites/${check_suite_id}/check-runs" --jq ".check_runs[] | select(.external_id == env.uuid) | .id")
           echo "::notice::Job ID: ${check_run_id}"
           echo "::notice::Job URL: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${check_run_id}"
