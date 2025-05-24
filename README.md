@@ -22,15 +22,23 @@ On the API side, this UUID is exposed as the corresponding [check run's `externa
   shell: bash
   env:
     GITHUB_TOKEN: ${{ github.token }}
+    uuid: ${{ steps.job-uuid.outputs.uuid }}
   run: |
     # first find the check_suite_id for this run
-    check_suite_id="$(gh api "repos/{owner}/{repo}/actions/runs/${GITHUB_RUN_ID}" --jq .check_suite_id)" >> "$GITHUB_OUTPUT"
+    check_suite_id="$(
+      gh api "repos/{owner}/{repo}/actions/runs/${GITHUB_RUN_ID}" --jq .check_suite_id
+    )" >> "$GITHUB_OUTPUT"
 
     # then use the check_suite_id and uuid to find the job id
     # (the check run id _is_ the job id)
-    job_id="$(gh api "repos/{owner}/{repo}/check-suites/${check_suite_id}/check-runs" --jq ".check_runs[] | select(.external_id == env.uuid) | .id")"
+    job_id="$(
+      gh api "repos/{owner}/{repo}/check-suites/${check_suite_id}/check-runs" \
+        --jq ".check_runs[] | select(.external_id == env.uuid) | .id"
+    )"
     echo "::notice::Job ID: ${job_id}"
 ```
+
+For example, you can see the extracted job ids from this repo's [own GitHub Actions jobs](https://github.com/jenseng/get-job-uuid/actions/workflows/cicd.yml).
 
 ## How does it work?
 
