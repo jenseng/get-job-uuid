@@ -32,6 +32,18 @@ On the API side, this UUID is exposed as the corresponding [check run's `externa
     echo "::notice::Job ID: ${job_id}"
 ```
 
+## How does it work?
+
+Although GitHub doesn't directly expose the job UUID, it can be reliably extracted from the worker diagnostic logs that get generated for every job. Even if debug logging is disabled, these logs are still present and accessible within the job. The basic process is as follows:
+
+1. The action finds the `Runner.Worker` process information.
+1. The action infers the `_diag` directory relative to the location of the `Runner.Worker` binary. This is necessary since the directory may be in a different location depending on the runner type (e.g. `ubuntu-latest` vs `windows-latest` vs `self-hosted`)
+1. The action extracts the UUID from the worker log file in the `_diag` directory.
+
+## Limitations
+
+This action is known not to work within [containerized jobs](https://docs.github.com/en/actions/writing-workflows/choosing-where-your-workflow-runs/running-jobs-in-a-container), since the host processes and file system are not accessible from within the container.
+
 ## License
 
 The scripts and documentation in this project are released under the [ISC License](./LICENSE.md)
