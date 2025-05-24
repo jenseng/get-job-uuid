@@ -33,8 +33,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # runner: [ubuntu-latest, macos-latest, windows-latest]
-        runner: [ubuntu-latest]
+        runner: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v4
       - uses: ./
@@ -54,4 +53,4 @@ jobs:
         run: |
           check_run_id=$(gh api /repos/{owner}/{repo}/check-suites/${check_suite_id}/check-runs --jq ".check_runs[] | select(.external_id == env.uuid) | .id")
           echo "::notice::Job ID: ${check_run_id}"
-          echo "::notice::Job URL: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs/${check_run_id}"
+          echo "::notice::Job URL: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/job/${check_run_id}"
