@@ -1,0 +1,56 @@
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release
+        required: true
+        default: patch
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+    env:
+      version: ${{ inputs.version }}
+    steps:
+      - name: Generate token
+        id: generate-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.PUSH_ID }}
+          private-key: ${{ secrets.PUSH_KEY }}
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ steps.generate-token.outputs.token }}
+      - name: Set up node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Create release commit and tags
+        shell: bash
+        run: |
+          new_version="$(npm version "$version" --no-git-tag-version --allow-same-version)"
+          npm install
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add package.json package-lock.json
+          git commit -m "chore(release): ${new_version} [skip ci]"
+          git tag "v$new_version"
+          major="$(node -p 'require("./package.json").version.split(".")[0]')"
+          git tag "v$major"
+          echo "new_version=$new_version" >> "$GITHUB_ENV"
+          echo "major=$major" >> "$GITHUB_ENV"
+      - name: Push commit and tags
+        shell: bash
+        run: |
+          git push --atomic main "v${new_version}" "+v${major}"
+      - name: Create release
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
+        run: |
+          gh release create "v${new_version}" \
+            --title "v${new_version}" \
+            --notes "Release v${new_version}" \
+            --target "$(git rev-parse HEAD)"
