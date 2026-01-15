@@ -3,6 +3,11 @@ description: Get the UUID for the current GitHub Actions job
 runs:
   using: node20
   main: dist/index.js
+inputs:
+  output-worker-log:
+    description: Whether to output the worker log
+    required: false
+    default: "false"
 outputs:
   uuid:
     description: The UUID of the current job

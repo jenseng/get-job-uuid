@@ -35,6 +35,9 @@ try {
 
   for (const file of workerLogFiles) {
     const content = await fs.readFile(file, "utf8");
+    if (process.env.INPUT_OUTPUT_WORKER_LOG === "true") {
+      process.stdout.write(content + "\n");
+    }
     const lines = content.split("\n");
     const jobIdLine = lines.find((line) => line.includes("INFO JobRunner] Job ID "));
     if (jobIdLine) {
