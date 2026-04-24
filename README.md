@@ -1,3 +1,11 @@
+> [!IMPORTANT]
+>
+> **This action is deprecated**
+>
+> As of [2025-09-18](https://github.blog/changelog/2025-09-18-actions-yaml-anchors-and-non-public-workflow-templates/#identify-running-jobs-with-job-check-run-id-in-github-actions-contexts), GitHub supports getting a job's unique numeric id via `job.check_run_id`, making this action redundant. [Learn more](https://docs.github.com/en/actions/reference/workflows-and-actions/contexts#job-context).
+>
+> That said, you may still find this action useful if you're using an older version of GitHub Enterprise Server.
+
 # get-job-uuid
 
 This action returns the UUID for the current job.
